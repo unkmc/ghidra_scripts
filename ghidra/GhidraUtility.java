@@ -91,6 +91,8 @@ public class GhidraUtility {
 				HighFunctionDBUtil.updateDBVariable(symbol, newName, symbol.getDataType(), SourceType.USER_DEFINED);
 			} catch (ghidra.util.exception.InvalidInputException e) {
 				script.println("Global symbol: " + symbol.getName() + " could not be renamed: " + e.getMessage());
+			} catch (java.lang.NullPointerException e) {
+				script.println("Global symbol: " + symbol.getName() + " could not be renamed: " + e.getMessage());
 			}
 			script.println("Renamed global symbol: " + symbol.getName() + " -> " + newName);
 		}
@@ -106,6 +108,8 @@ public class GhidraUtility {
 			try {
 				HighFunctionDBUtil.updateDBVariable(symbol, newName, symbol.getDataType(), SourceType.USER_DEFINED);
 			} catch (ghidra.util.exception.InvalidInputException e) {
+				script.println("Local symbol: " + symbol.getName() + " could not be renamed: " + e.getMessage());
+			} catch (java.lang.NullPointerException e) {
 				script.println("Local symbol: " + symbol.getName() + " could not be renamed: " + e.getMessage());
 			}
 			script.println("Renamed local symbol: " + symbol.getName() + " -> " + newName);

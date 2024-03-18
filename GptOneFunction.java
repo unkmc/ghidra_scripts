@@ -5,6 +5,7 @@ import ghidra.app.script.GhidraScript;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionManager;
 import ghidra.program.model.pcode.HighFunction;
+import ghidra.program.model.symbol.SourceType;
 
 import java.lang.reflect.Type;
 import java.net.http.HttpClient;
@@ -20,54 +21,26 @@ public class GptOneFunction extends GhidraScript {
 	Gson gson = new Gson();
 	HttpClient client = HttpClient.newHttpClient();
 	Configuration configuration = new Configuration();
-//	String model = "gpt-4-turbo-preview";
-	String model = "gpt-3.5-turbo";
+	String model = "gpt-4-turbo-preview";
+//	String model = "gpt-3.5-turbo";
+	String promptString = "This is a decompiled function from Ghidra; analyze it."
+			+ "Your repy must be non-nested (i.e. FLAT) JSON." + "Give the function a better name."
+			+ "\"functionName\" is the key for the new function name."
+			+ "Give the parameters and variables better names."
+			+ "All renames will have original name (without type info) as key and new name (without type info) as value.";
 
 	@Override
 	protected void run() throws Exception {
 		DecompileResults decompiledFunction = this.getCurrentDecompiledFunction();
-		String decompiledCode = decompiledFunction.getDecompiledFunction().getC();
-
-		String threadId = OpenAiUtility.createThread(configuration, this);
-		if (threadId == null) {
-			throw new Exception("Unable to create thread.");
-		}
-		configuration.setThreadId(threadId);
-
-		String messageId = OpenAiUtility.createMessage(decompiledCode, threadId, configuration, this);
-		if (messageId == null) {
-			throw new Exception("Unable to create message.");
-		}
-
-		String runId = OpenAiUtility.createRun(model, configuration, this);
-		if (runId == null) {
-			throw new Exception("Unable to create run.");
-		}
-
-		Thread.sleep(5000);
-		String runStatus = OpenAiUtility.getRunStatus(runId, configuration, this);
-		while (runStatus.equals("queued") || runStatus.equals("in_progress")) {
-			Thread.sleep(2000); // Don't get throttled
-			runStatus = OpenAiUtility.getRunStatus(runId, configuration, this);
-		}
-		if (!runStatus.equals("completed")) {
-			println("Run status was " + runStatus + " so I guess the run failed.");
-			return;
-		}
-
-		String fullMessageResponse = OpenAiUtility.getLatestMessage(messageId, configuration, this);
-		String responseContent = OpenAiUtility.extractContentFromGptResponse(fullMessageResponse, this);
-		println("Response Content: " + responseContent);
-
-		Map<String, String> responseMap = jsonToMap(responseContent);
-		println("Response Map: " + responseMap);
-
-		// get current function and list of associated variables
-		// TODO: this doesn't seem to get "pointer" type variables for some reason
-//		Function function = decompiledFunction.getFunction();
-//		GhidraUtility.renameFunctionVariables(function, responseMap, this);
-
 		HighFunction highFunction = decompiledFunction.getHighFunction();
+
+		// Create the request body
+		String decompiledCode = decompiledFunction.getDecompiledFunction().getC();
+		Map<String, String> responseMap = OpenAiUtility.synchronousRequest(promptString, decompiledCode, model,
+				configuration, this);
+//		println("Got response map: " + responseMap);
+
+//		GhidraUtility.renameFunctionVariables(function, responseMap, this);
 		GhidraUtility.renameHighFunctionVariables(highFunction, responseMap, this);
 	}
 
