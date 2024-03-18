@@ -1,4 +1,4 @@
-package openai;
+package openai.request;
 
 public class MessageRequest {
 	String role;
