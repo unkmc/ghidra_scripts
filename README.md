@@ -7,7 +7,10 @@ This is my scripts folder for Ghidra. They're all written in Java so far. That s
 [GptOneFunction.java](./GptOneFunction.java) was the first script I wrote and the reason I started making Ghidra scripts. It uses Ghidra's APIs to get a string representation of the current (Ghidra-decompiled) function. Then it passes that string to one of Open AI's models (currently `gpt-4-turbo-preview`) via their APIs with the following prompt:
 
 ```
-This is a decompiled function from Ghidra; analyze it. Your reply must be non-nested (i.e. FLAT) JSON. Give the function a better name. "functionName" is the key for the new function name. Give the parameters and variables better names. All renames will have original name (without type info) as key and new name (without type info) as value.
+This is a decompiled function from Ghidra; analyze it. Your reply must be non-nested (i.e. FLAT) JSON. 
+Give the function a better name. "functionName" is the key for the new function name. 
+Give the parameters and variables better names. All renames will have original name (without type info) 
+as key and new name (without type info) as value.
 ```
 
 I may not keep this documentation completely up-to-date, so if that's important to you, check the code to make sure that's still right.
