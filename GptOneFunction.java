@@ -24,7 +24,7 @@ public class GptOneFunction extends GhidraScript {
 	String model = "gpt-4-turbo-preview";
 //	String model = "gpt-3.5-turbo";
 	String promptString = "This is a decompiled function from Ghidra; analyze it."
-			+ "Your repy must be non-nested (i.e. FLAT) JSON." + "Give the function a better name."
+			+ "Your reply must be non-nested (i.e. FLAT) JSON." + "Give the function a better name."
 			+ "\"functionName\" is the key for the new function name."
 			+ "Give the parameters and variables better names."
 			+ "All renames will have original name (without type info) as key and new name (without type info) as value.";
@@ -38,9 +38,7 @@ public class GptOneFunction extends GhidraScript {
 		String decompiledCode = decompiledFunction.getDecompiledFunction().getC();
 		Map<String, String> responseMap = OpenAiUtility.synchronousRequest(promptString, decompiledCode, model,
 				configuration, this);
-//		println("Got response map: " + responseMap);
 
-//		GhidraUtility.renameFunctionVariables(function, responseMap, this);
 		GhidraUtility.renameHighFunctionVariables(highFunction, responseMap, this);
 	}
 

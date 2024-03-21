@@ -57,14 +57,4 @@ public class ReadClipboardStack extends GhidraScript {
             return null;
         }
     }
-
-//    private Address parseAddress(String addressString) {
-//        try {
-//            return currentProgram.getAddressFactory().getAddress(addressString);
-//        } catch (Exception e) {
-//            println("Invalid address: " + addressString);
-//            return null;
-//        }
-//    }
-
 }

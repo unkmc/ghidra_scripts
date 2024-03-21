@@ -5,6 +5,7 @@ public class ConfigurationExample {
 	public String apiKey = "apiKey";
 	public String assistantId = "assistantId";
 
+	public String completionsUri = "https://api.openai.com/v1/chat/completions";
 	public String assistantThreadsUri = "https://api.openai.com/v1/threads";
 	public String assistantThreadId;
 	public String assistantMessagesUri;
